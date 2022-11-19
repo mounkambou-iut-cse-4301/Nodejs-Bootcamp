@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const AppError=require('./utils/AppError')
 const globalErrorHandler=require('./controllers/errorController')
 const tourRouter = require('./routes/tourRoutes');
-// const userRouter = require('./routes/userRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 // 3) ROUTES
 app.use('/api/v1/tours', tourRouter);
-// app.use('/api/v1/users', userRouter);
+app.use('/api/v1/users', userRouter);
 
 //Handling Unhandled Routes
 app.all('*',(req,res,next)=>{
