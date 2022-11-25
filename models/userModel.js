@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, "Please provide a valid email"],
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user'
+  },
   password: {
     type: String,
     required: [true, "Please tell us your password"],
@@ -32,7 +37,7 @@ const userSchema = new mongoose.Schema({
       message: "Password does not match",
     },
   },
-  passwordChangedAt:Date
+  passwordChangedAt: Date,
 });
 
 //Add document middleware: runs before .save() and .create()
@@ -40,7 +45,7 @@ userSchema.pre("save", async function (next) {
   // Only run this function if password was modified
   if (!this.isModified("password")) return next();
   //encription
-  this.password = await bcript.hash(this.password, 12);
+  this.password = await bcrypt.hash(this.password, 12);
 
   //delete the passwordConfirm field
   this.passwordConfirm = undefined;
@@ -48,26 +53,26 @@ userSchema.pre("save", async function (next) {
 });
 
 // Check password. Instance method and will be available on all docs
-userSchema.methods.correctPassword = async function(
-    candidatePassword,
-    userPassword
-  ) {
-    return await bcrypt.compare(candidatePassword, userPassword);
-  };
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
-  userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
-    if (this.passwordChangedAt) {
-      const changedTimestamp = parseInt(
-        this.passwordChangedAt.getTime() / 1000,
-        10
-      );
-  
-      return JWTTimestamp < changedTimestamp;
-    }
-  
-    // False means NOT changed
-    return false;
-  };
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // False means NOT changed
+  return false;
+};
 
 const User = mongoose.model("User", userSchema);
 
