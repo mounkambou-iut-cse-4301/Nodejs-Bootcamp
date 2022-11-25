@@ -93,3 +93,21 @@ next();
   }
 }
 
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+//1 Get user based on post email
+const user =await User.findOne({email:req.body.email})
+if(!user){
+  return next(new AppError('There is no user with this email addess.',404))
+}
+
+//2 Generate the random reset token
+const resetToken=user.createPasswordReset();
+// save reset Token
+await user.save({validateBeforeSave:false}); // Will desactivate all the validators we have on our schema
+
+
+// 3 send email
+
+})
+exports.resetPassword = catchAsync(async (req, res, next) => {})
+
