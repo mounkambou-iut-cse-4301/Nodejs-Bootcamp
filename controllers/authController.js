@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const AppError = require("./../utils/AppError");
 const { log } = require("console");
 const sendEmail = require("./../utils/email");
+const { trusted } = require("mongoose");
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -15,6 +16,21 @@ const signToken = (id) => {
 
 const createSendToken=(user,statusCode,res)=>{
   const token = signToken(user._id);
+
+  // Send cookies
+  const cookieOptions = {
+    
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIES_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Remove password from output
+  user.password = undefined;
   res.status(statusCode).json({
     status: "success",
     token,
