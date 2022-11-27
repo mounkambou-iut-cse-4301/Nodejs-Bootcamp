@@ -40,7 +40,12 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken:String,
-  passwordResetExpires:Date
+  passwordResetExpires:Date,
+  active:{
+    type:Boolean,
+    default:true,
+    select:false
+  }
 
 });
 
@@ -61,6 +66,12 @@ userSchema.pre('save', function(next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
+// Add query middleware. Point to the current query
+userSchema.pre(/^find/, async function (next) {
+this.find({active:{$ne:false}})
+next();
+})
 
 // Check password. Instance method and will be available on all docs
 userSchema.methods.correctPassword = async function (
