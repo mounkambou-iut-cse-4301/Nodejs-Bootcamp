@@ -12,7 +12,7 @@ async function main() {
   console.log('DB connection successful!')
   // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
 }
-const tours=JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`,'utf-8'));
+const tours=JSON.parse(fs.readFileSync(`${__dirname}/tours.json`,'utf-8'));
 
 // Import data into db
 const importData=async()=>{
