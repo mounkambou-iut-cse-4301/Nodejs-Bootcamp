@@ -103,7 +103,12 @@ const tourSchema = new mongoose.Schema(
         day: Number
       }
     ],
-    guides:Array,
+    guides:[
+      {
+      type:mongoose.Schema.ObjectId,
+      ref:'User'
+      }
+    ],
   },
   {
     //add durationWeeks
@@ -123,13 +128,13 @@ tourSchema.pre("save", function (next) {
   next();
 });
 
-tourSchema.pre("save",async function (next) {
- const guidePromises= this.guides.map(async id=> await User.findById(id)
-  )
-  this.guides=await Promise.all(guidePromises);
+// tourSchema.pre("save",async function (next) {
+//  const guidePromises= this.guides.map(async id=> await User.findById(id)
+//   )
+//   this.guides=await Promise.all(guidePromises);
 
-  next()
-});
+//   next()
+// });
 
 //pre save middleware
 // tourSchema.pre('save',function(next){
