@@ -79,7 +79,7 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    startLocations: {
+    startLocation: {
       
         type: {
           type: String,
