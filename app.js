@@ -1,4 +1,5 @@
 const path = require('path');
+const multer=require('multer');
 const { error } = require('console');
 const express = require('express');
 const morgan = require('morgan');
